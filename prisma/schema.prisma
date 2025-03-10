@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户模型
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(50)
+  username  String    @unique @db.VarChar(50)
+  password  String    @db.VarChar(255)
+  avatar    String?   @db.VarChar(255)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  chores    Chore[]
+  sessions  Session[]
+
+  @@map("users")
+}
+
+// 会话模型
+model Session {
+  id        String   @id @db.VarChar(255)
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// 家务类型模型
+model ChoreType {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  weight      Float    @default(1.0)
+  icon        String?  @db.VarChar(50)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  chores      Chore[]
+
+  @@map("chore_types")
+}
+
+// 家务记录模型
+model Chore {
+  id          Int       @id @default(autoincrement())
+  choreType   ChoreType @relation(fields: [choreTypeId], references: [id])
+  choreTypeId Int       @map("chore_type_id")
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int       @map("user_id")
+  date        DateTime  @db.Date
+  notes       String?   @db.Text
+  verified    Boolean   @default(false)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("chores")
+}
+
+// 系统设置模型
+model Setting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique @db.VarChar(50) @map("setting_key")
+  value     String?  @db.Text @map("setting_value")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
