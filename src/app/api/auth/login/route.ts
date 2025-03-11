@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       value: sessionId,
       expires: expiresAt,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       path: '/',
     });
 
