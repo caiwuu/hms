@@ -1,0 +1,44 @@
+# 依赖相关
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Next.js构建输出
+.next
+out
+
+# 测试相关
+coverage
+.nyc_output
+tests
+
+# 环境变量文件（包含敏感信息）
+.env
+.env.*
+!.env.example
+
+# 版本控制
+.git
+.gitignore
+.github
+
+# 开发工具相关
+.vscode
+.idea
+*.sublime-*
+.DS_Store
+*.swp
+*.swo
+
+# Docker相关
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# 其他
+README.md
+LICENSE
+*.md
+*.log
+*.txt

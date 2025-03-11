@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Next.js应用
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://hmsuser:hmspassword@db:3306/hms
+    depends_on:
+      - db
+    networks:
+      - hms-network
+
+  # MySQL数据库
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=hms
+      - MYSQL_USER=hmsuser
+      - MYSQL_PASSWORD=hmspassword
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - hms-network
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+networks:
+  hms-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
